@@ -82,13 +82,42 @@ fi
 
 trap exit_script SIGINT SIGTSTP
 
+# ============================================
+# FIXED: THRESHOLD ডিফাইন
+# ============================================
+THRESHOLD=100
+
+# ============================================
+# FIXED: check_disk_usage ফাংশন
+# ============================================
 check_disk_usage() {
     local threshold=${1:-$THRESHOLD}
-    local total_size=$(df -h "$HOME" | awk 'NR==2 {print $2}')
-    local used_size=$(df -h "$HOME" | awk 'NR==2 {print $3}')
-    local disk_usage=$(df "$HOME" | awk 'NR==2 {print $5}' | sed 's/%//g')
+    local total_size=""
+    local used_size=""
+    local disk_usage=""
+    
+    # ডিস্ক ইনফো নেওয়া
+    if command -v df >/dev/null 2>&1; then
+        total_size=$(df -h "$HOME" 2>/dev/null | awk 'NR==2 {print $2}')
+        used_size=$(df -h "$HOME" 2>/dev/null | awk 'NR==2 {print $3}')
+        disk_usage=$(df "$HOME" 2>/dev/null | awk 'NR==2 {print $5}' | sed 's/%//g')
+    fi
 
-    if [ "$disk_usage" -ge "$threshold" ]; then
+    # FIXED: যদি খালি থাকে তাহলে 0 সেট করো
+    if [ -z "$disk_usage" ] || [ "$disk_usage" = "" ]; then
+        disk_usage=0
+    fi
+    
+    if [ -z "$total_size" ] || [ "$total_size" = "" ]; then
+        total_size="N/A"
+    fi
+    
+    if [ -z "$used_size" ] || [ "$used_size" = "" ]; then
+        used_size="N/A"
+    fi
+
+    # FIXED: তুলনা করার আগে নাম্বারে কনভার্ট
+    if [ "$disk_usage" -ge "$threshold" ] 2>/dev/null; then
         echo -e "${g}[${n}\uf0a0${g}] ${r}WARN: ${y}Disk Full ${g}${disk_usage}% ${c}| ${c}U${g}${used_size} ${c}of ${c}T${g}${total_size}"
     else
         echo -e "${y}Disk usage: ${g}${disk_usage}% ${c}| ${g}${used_size}"
@@ -295,16 +324,6 @@ dxnetcheck() {
     exit 1
 }
 
-sync_id() {
-    UPDATE_LOG="$HOME/.t-banner_update_id.txt"
-    if command -v curl >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
-        # T-BANNER_URL define korte hobe
-        local T-BANNER_URL="https://api.github.com/repos/your-repo/your-branch"
-        local sid=$(curl -s --connect-timeout 5 "$T-BANNER_URL/update" 2>/dev/null | jq -r '.id' 2>/dev/null | tr -d '[:space:]')
-        [ -n "$sid" ] && [ "$sid" != "null" ] && echo "$sid" > "$UPDATE_LOG"
-    fi
-}
-
 donotchange() {
     clear
     echo
@@ -368,7 +387,6 @@ donotchange() {
         echo -e " ${A} ${c}Your Banner created ${g}Successfully¡${c}"
         echo
         sleep 1
-        sync_id
     else
         echo
         echo -e " ${E} ${r}Error occurred while processing the file."
