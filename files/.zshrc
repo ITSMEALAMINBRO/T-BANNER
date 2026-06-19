@@ -1,25 +1,29 @@
+# ============================================
+# T-BANNER ZSHRC - Termux Only
+# ============================================
+
 ZSH_THEME="t-banner"
-
-if [ -d "/data/data/com.termux/files/usr/" ]; then
-    export ZSH=$HOME/.oh-my-zsh
-    TOOLX_DIR="$HOME/.toolx"
-    D1="$HOME/.termux"
-    PLUGINS_DIR="/data/data/com.termux/files/home/.oh-my-zsh/plugins"
-    alias rd='termux-reload-settings'
-else
-    export ZSH=$HOME/.oh-my-zsh
-    TOOLX_DIR="$HOME/.toolx"
-    D1="$HOME/.T-BANNER"
-    PLUGINS_DIR="$HOME/.oh-my-zsh/plugins"
-    alias rd='source ~/.zshrc 2>/dev/null'
-fi
-
+export ZSH=$HOME/.oh-my-zsh
 plugins=(git)
 
+# ============================================
+# Termux Specific Setup
+# ============================================
+TOOLX_DIR="$HOME/.toolx"
+D1="$HOME/.termux"
+PLUGINS_DIR="$HOME/.oh-my-zsh/plugins"
+alias rd='termux-reload-settings'
+
+# ============================================
+# Load Oh-My-Zsh
+# ============================================
 if [ -f "$ZSH/oh-my-zsh.sh" ]; then
     source "$ZSH/oh-my-zsh.sh" >/dev/null 2>&1
 fi
 
+# ============================================
+# Load Plugins
+# ============================================
 if [ -f "$PLUGINS_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
     source "$PLUGINS_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh" >/dev/null 2>&1
 fi
@@ -28,20 +32,18 @@ if [ -f "$PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; th
     source "$PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >/dev/null 2>&1
 fi
 
+# ============================================
+# Alias for lsd (if installed)
+# ============================================
 if command -v lsd >/dev/null 2>&1; then
-alias la='lsd -l --blocks size,name --color always | column -c $(tput cols)'
-alias ls='lsd -l --blocks size,name --color always'
-alias lt='lsd --tree --blocks size,name --color always --icon always'
+    alias la='lsd -l --blocks size,name --color always | column -c $(tput cols)'
+    alias ls='lsd -l --blocks size,name --color always'
+    alias lt='lsd --tree --blocks size,name --color always --icon always'
 fi
 
-[ -f "$TOOLX_DIR/chat" ] && alias chat="$TOOLX_DIR/chat"
-[ -f "$TOOLX_DIR/unstall" ] && alias unstall="$TOOLX_DIR/unstall"
-[ -f "$TOOLX_DIR/dev" ] && alias dev="$TOOLX_DIR/dev"
-[ -f "$TOOLX_DIR/dev" ] && alias report="$TOOLX_DIR/dev"
-[ -f "$TOOLX_DIR/update" ] && alias update="$TOOLX_DIR/update"
-[ -f "$TOOLX_DIR/bname" ] && alias bname="$TOOLX_DIR/bname"
-[ -f "$TOOLX_DIR/help" ] && alias help="$TOOLX_DIR/help"
-
+# ============================================
+# Colors & Symbols
+# ============================================
 r='\033[91m'
 p='\033[1;95m'
 y='\033[93m'
@@ -68,6 +70,9 @@ bol='\033[1m'
 bold="${bol}\e[4m"
 THRESHOLD=100
 
+# ============================================
+# Check Disk Usage
+# ============================================
 check_disk_usage() {
     local threshold=${1:-$THRESHOLD}
     local total_size
@@ -87,96 +92,25 @@ check_disk_usage() {
     fi
 }
 
+# ============================================
+# Banner Display
+# ============================================
 banner() {
-command clear
-echo
-echo -e "    ${y}░█████╗░░█████╗░██████╗░███████╗██╗░░██╗"
-echo -e "    ${y}██╔══██╗██╔══██╗██╔══██╗██╔════╝╚██╗██╔╝"
-echo -e "    ${y}██║░░╚═╝██║░░██║██║░░██║█████╗░░░╚███╔╝░"
-echo -e "    ${c}██║░░██╗██║░░██║██║░░██║██╔══╝░░░██╔██╗░"
-echo -e "    ${c}╚█████╔╝╚█████╔╝██████╔╝███████╗██╔╝╚██╗"
-echo -e "    ${c}░╚════╝░░╚════╝░╚═════╝░╚══════╝╚═╝░░╚═╝${n}"
-echo
-}
-
-spin() {
     command clear
-    banner
-    local pid=$!
-    local delay=0.40
-    local spinner=('█■■■■' '■█■■■' '■■█■■' '■■■█■' '■■■■█')
-
-    while ps -p $pid > /dev/null 2>&1; do
-        for i in "${spinner[@]}"; do
-            tput civis
-            echo -ne "\033[1;96m\r [+] Downloading..please wait.........\e[33m[\033[1;92m$i\033[1;93m]\033[1;0m   "
-            sleep $delay
-            printf "\b\b\b\b\b\b\b\b"
-        done
-    done
-    printf "   \b\b\b\b\b"
-    tput cnorm
-    printf "\e[1;93m [Done]\e[0m\n"
     echo
-    sleep 1
-}
-if [ -d "$HOME/T-BANNER" ]; then
-    rm -rf $HOME/T-BANNER
- fi
-T-BANNER="https://t-banner-server-x.vercel.app"
-mkdir -p "$D1" 
-UPDATE_LOG="$HOME/.t-banner_update_id.txt"
-
-udp() {
-if [ -d "$HOME/T-BANNER" ]; then
-    rm -rf $HOME/T-BANNER
- fi
-    if command -v curl >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
-        local update_data=$(curl -s --connect-timeout 3 "$T-BANNER/update" 2>/dev/null)
-        local server_id=$(echo "$update_data" | jq -r '.id' 2>/dev/null | tr -d '[:space:]')
-        local server_msg=$(echo "$update_data" | jq -r '.message' 2>/dev/null)
-
-        if [ -n "$server_id" ] && [ "$server_id" != "null" ]; then
-            local current_id=""
-            if [ -f "$UPDATE_LOG" ]; then
-                current_id=$(cat "$UPDATE_LOG" 2>/dev/null | tr -d '[:space:]')
-            fi
-
-            if [ "$current_id" != "$server_id" ]; then
-                echo "$server_id" > "$UPDATE_LOG"
-
-                banner
-                echo -e " ${A} ${c}Tools Updated ${n}| ${c}New ${g}$server_msg"
-                sleep 3
-                cd "$HOME" || return
-                rm -rf T-BANNER
-                git clone https://github.com/Alpha-T-BANNER369/T-BANNER.git >/dev/null 2>&1 &
-                spin
-                
-                if [ -d "T-BANNER" ]; then
-                    cd T-BANNER || return
-                    bash install.sh
-                fi
-            fi
-        fi
-    fi
+    echo -e "    ${y}░█████╗░░█████╗░██████╗░███████╗██╗░░██╗"
+    echo -e "    ${y}██╔══██╗██╔══██╗██╔══██╗██╔════╝╚██╗██╔╝"
+    echo -e "    ${y}██║░░╚═╝██║░░██║██║░░██║█████╗░░░╚███╔╝░"
+    echo -e "    ${c}██║░░██╗██║░░██║██║░░██║██╔══╝░░░██╔██╗░"
+    echo -e "    ${c}╚█████╔╝╚█████╔╝██████╔╝███████╗██╔╝╚██╗"
+    echo -e "    ${c}░╚════╝░░╚════╝░╚═════╝░╚══════╝╚═╝░░╚═╝${n}"
+    echo
 }
 
-load() {
-    command clear
-    echo -e "${TERMINAL}${r}●${n}"
-    sleep 0.2
-    command clear
-    echo -e "${TERMINAL}${r}●${y}●${n}"
-    sleep 0.2
-    command clear
-    echo -e "${TERMINAL}${r}●${y}●${b}●${n}"
-    sleep 0.2
-}
-
+# ============================================
+# Dashboard Drawing Functions
+# ============================================
 PUT() { echo -en "\033[${1};${2}H"; }
-DRAW() { echo -en "\033%"; echo -en "\033(0"; }
-WRITE() { echo -en "\033(B"; }
 HIDECURSOR() { echo -en "\033[?25l"; }
 NORM() { echo -en "\033[?12l\033[?25h"; }
 
@@ -235,24 +169,21 @@ draw_dashboard() {
     PUT 10 ${var4}
     echo -e "\e[32m[\e[0m\uf489\e[32m] \e[36mT-BANNER \e[36m1.5\e[0m"
 
+    # ============================================
+    # Show Date & Time (No Internet/Ads)
+    # ============================================
     PUT 12 1
-    local ads1=""
-    if command -v curl >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
-        ads1=$(curl -s --connect-timeout 2 "$T-BANNER/ads" | jq -r '.message' 2>/dev/null)
-    fi
-
-    if [ -z "$ads1" ] || [ "$ads1" = "null" ]; then
-        local DATE=$(date +"%Y-%b-%a ${g}—${c} %d")
-        local TM=$(date +"%I:%M:%S ${g}— ${c}%p")
-        echo -e " ${g}[${n}${CAL}${g}] ${c}${TM} ${g}| ${c}${DATE}"
-    else
-        echo -e " ${g}[${n}${PKGS}${g}] ${c}Ｃｏｄｅｘ: ${g}$ads1"
-    fi
+    local DATE=$(date +"%Y-%b-%a ${g}—${c} %d")
+    local TM=$(date +"%I:%M:%S ${g}— ${c}%p")
+    echo -e " ${g}[${n}${CAL}${g}] ${c}${TM} ${g}| ${c}${DATE}"
 
     PUT 13 1
     NORM
 }
 
+# ============================================
+# Custom Clear Command
+# ============================================
 smart_clear() {
     if [ "$1" = "n" ]; then
         command clear
@@ -263,7 +194,25 @@ smart_clear() {
 }
 alias clear='smart_clear'
 
-udp
+# ============================================
+# Load Animation (Simple)
+# ============================================
+load() {
+    command clear
+    echo -e "${TERMINAL}${r}●${n}"
+    sleep 0.15
+    command clear
+    echo -e "${TERMINAL}${r}●${y}●${n}"
+    sleep 0.15
+    command clear
+    echo -e "${TERMINAL}${r}●${y}●${b}●${n}"
+    sleep 0.15
+    command clear
+}
+
+# ============================================
+# Startup
+# ============================================
 HIDECURSOR
 load
 command clear
