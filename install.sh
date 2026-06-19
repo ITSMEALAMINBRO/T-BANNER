@@ -83,27 +83,21 @@ fi
 trap exit_script SIGINT SIGTSTP
 
 # ============================================
-# FIXED: THRESHOLD ডিফাইন
+# check_disk_usage 
 # ============================================
 THRESHOLD=100
-
-# ============================================
-# FIXED: check_disk_usage ফাংশন
-# ============================================
 check_disk_usage() {
     local threshold=${1:-$THRESHOLD}
     local total_size=""
     local used_size=""
     local disk_usage=""
     
-    # ডিস্ক ইনফো নেওয়া
     if command -v df >/dev/null 2>&1; then
         total_size=$(df -h "$HOME" 2>/dev/null | awk 'NR==2 {print $2}')
         used_size=$(df -h "$HOME" 2>/dev/null | awk 'NR==2 {print $3}')
         disk_usage=$(df "$HOME" 2>/dev/null | awk 'NR==2 {print $5}' | sed 's/%//g')
     fi
 
-    # FIXED: যদি খালি থাকে তাহলে 0 সেট করো
     if [ -z "$disk_usage" ] || [ "$disk_usage" = "" ]; then
         disk_usage=0
     fi
@@ -116,7 +110,6 @@ check_disk_usage() {
         used_size="N/A"
     fi
 
-    # FIXED: তুলনা করার আগে নাম্বারে কনভার্ট
     if [ "$disk_usage" -ge "$threshold" ] 2>/dev/null; then
         echo -e "${g}[${n}\uf0a0${g}] ${r}WARN: ${y}Disk Full ${g}${disk_usage}% ${c}| ${c}U${g}${used_size} ${c}of ${c}T${g}${total_size}"
     else
@@ -127,76 +120,13 @@ data=$(check_disk_usage)
 
 start() {
     clear
-    tput civis
-    LIME='\e[38;5;154m'
-    C='\e[38;5;51m'
-    BLINK='\e[5m'
-    N='\e[0m'
-    TOTAL_CHARS=0
-    texts=(
-        "「 T-BANNER STARTED 」"
-        "「 HELLO DEAR USER I'M DX-SIMU 」"
-        "「 T-BANNER WILL PROTECT YOU 」"
-        "「 GOODBYE 」"
-        "「 ENJOY OUR T-BANNER 」"
-        "「............... 」"
-    )
-    for t in "${texts[@]}"; do
-        TOTAL_CHARS=$((TOTAL_CHARS + ${#t}))
-    done
-    CURRENT_CHAR=0
-    update_progress() {
-        local percentage=$(( CURRENT_CHAR * 100 / TOTAL_CHARS ))
-        if [ "$percentage" -gt 100 ]; then percentage=100; fi
-        local term_width=$(tput cols)
-        local bar_width=$((term_width - 20))
-        if [ "$bar_width" -gt 50 ]; then bar_width=50; fi
-        local padding=$(( (term_width - bar_width - 10) / 2 ))
-        local filled=$(( percentage * bar_width / 100 ))
-        local empty=$(( bar_width - filled ))
-        local f_bar=$(printf "%${filled}s" "")
-        local e_bar=$(printf "%${empty}s" "")
-        tput sc
-        tput cup 2 0
-        tput el
-        printf "%${padding}s${LIME}[\e[48;5;154m%s\e[0m\e[48;5;236m%s\e[0m${LIME}] ${C}%3d%%${N}" "" "$f_bar" "$e_bar" "$percentage"
-        tput rc
-    }
-    type_effect() {
-        local text="$1"
-        local delay="$2"
-        local term_width=$(tput cols)
-        local text_length=${#text}
-        local padding=$(( (term_width - text_length) / 2 ))
-        printf "%${padding}s" ""
-        for ((i=0; i<${#text}; i++)); do
-            CURRENT_CHAR=$((CURRENT_CHAR + 1))
-            update_progress
-            printf "${LIME}${BLINK}${text:$i:1}${N}"
-            if (( RANDOM % 1 == 0 )); then
-                printf "\e[48;5;51m \e[0m"
-                printf "\b \b"
-            fi
-            sleep "$delay"
-        done
-        echo
-        echo
-    }
-    tput cup 5 0
-    type_effect "${texts[0]}" 0.01
-    sleep 0.1
-    type_effect "${texts[1]}" 0.02
-    sleep 0.1
-    type_effect "${texts[2]}" 0.02
-    sleep 0.1
-    type_effect "${texts[3]}" 0.02
-    sleep 0.1
-    type_effect "${texts[4]}" 0.02
-    sleep 0.1
-    type_effect "${texts[5]}" 0.02
-    sleep 1
-    tput cnorm
-    clear 
+    echo -e "${g}◈ T-BANNER STARTED ◈${n}"
+    sleep 0.5
+    echo -e "${c}HELLO DEAR USER I'M DX-SIMU${n}"
+    sleep 0.5
+    echo -e "${g}T-BANNER WILL PROTECT YOU${n}"
+    sleep 0.5
+    clear
 }
 start
 
