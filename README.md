@@ -1,77 +1,79 @@
+# X-Fm Banner
 
-<h2 align="center"> <img src="https://raw.githubusercontent.com/DARK-H4CKER01/CODEX/refs/heads/main/files/Dx-codex.jpg" width="470" /> </h2>
+**X-Fm Banner — Termux Custom Banner Tool**
 
-```
-┏━━┓╋╋╋┏┓╋╋╋┏━┓╋╋┏┓
-┃┏┓┣┓┏━┫┗┳━━┫┏╋━┳┛┣━┳┳┓
-┃┣┫┃┗┫╋┃┃┣━━┫┗┫╋┃╋┃┻╋┃┫
-┗┛┗┻━┫┏┻┻┛╋╋┗━┻━┻━┻━┻┻┛
-╋╋╋╋╋┗┛
-```
+[![TELEGRAM](https://img.shields.io/badge/TELEGRAM-CHANNEL-blue?style=for-the-badge&logo=telegram)](https://t.me/fmitofficial)
+![VERSION](https://img.shields.io/badge/VERSION-1.0.0-green?style=for-the-badge)
+![PLATFORM](https://img.shields.io/badge/PLATFORM-TERMUX-orange?style=for-the-badge)
 
-  [![Telegram2](https://img.shields.io/badge/TELEGRAM-CHANNEL-red?style=for-the-badge&logo=telegram)](https://t.me/alphacodex369)
+![X-Fm Banner Preview](https://github.com/user-attachments/assets/f0f1c248-cc23-4a24-aa70-d4b71a4ee99b)
 
-
-## 🔮 FEATURES:
-
-- **`Advance Command found`**
-- **`Advance Exit terminal`**
-- **`Clear Terminal Visual Banner`**
-- **`Auto Update Banner`**
-- **`Advance ASCII ART`**
-- **`Usage Timer`**
-- **`Etc...`**
 ---
 
-## 🧪 NAME & CMD:
-
-- **Help Menu:** | `help`
-- **Codex Chat:** | `chat`
-- **Restore Terminal:** | `unstall`
-- **Change Name:** | `bname`
-- **Update Banner:** | `update`
-- **Report Dev:** | `dev` | `report`
----
-
-
-## 📱 INSTALL WITH TERMUX :
+## 📦 Installation (Termux)
 
 ```bash
-pkg update -y && pkg upgrade -y -o Dpkg::Options::="--force-confold" && for p in curl git ncurses-utils jq python; do command -v $p >/dev/null 2>&1 || pkg install -y $p; done && git clone https://github.com/Alpha-Codex369/CODEX.git && cd CODEX/ && chmod +x * && bash install.sh
+apt update && apt upgrade -y
 ```
----
-
-### 🐧 INSTALL WITH LINUX:
 
 ```bash
-sudo apt update -y && sudo apt upgrade -y && for p in curl git ncurses-utils jq python; do command -v $p >/dev/null 2>&1 || sudo apt-get install -y $p; done && git clone https://github.com/Alpha-Codex369/CODEX.git && cd CODEX/ && chmod +x * && bash install.sh
+pkg install git -y
 ```
----
-
-## 🧩 FANCY BANNER
 
 ```bash
-[ -d /data/data/com.termux ] && { pkg install ruby -y && gem install lolcat; } || { sudo apt update && sudo apt install ruby -y && sudo gem install lolcat; }
+git clone https://github.com/X-Fm/x-fmBanner.git
 ```
----
-
-## ✨️ HELP MENU
 
 ```bash
-help
+cd x-fmBanner/
 ```
----
-
-<details id="missing-code-coverage">
-
-  <summary>USE TOOL</summary>
-
-##### How to use CODEX Banner tools
 
 ```bash
-
+chmod +x *
 ```
+
+```bash
+bash install.sh
+```
+
+### ▶️ Run
+
+```bash
+exit
+```
+
+### ⚡ One-Line Install
+
+```bash
+apt update && apt upgrade -y ; pkg install git -y ; git clone https://github.com/X-Fm/x-fmBanner.git ; cd x-fmBanner/ ; chmod +x * ; bash install.sh
+```
+
+---
+
+## 🛠️ How To Use
+
+<details>
+<summary>Click to expand</summary>
+
+- Run install script and follow the on-screen instructions
+- Use **UP / DOWN** arrow keys to navigate the menu
+- Press **Enter** to select an option
+- Enter your banner name **(1–8 characters)**
+- Type `exit` after setup to apply changes
 
 </details>
 
-  [![Telegram1](https://img.shields.io/badge/TELEGRAM-CHANNEL-red?style=for-the-badge&logo=telegram)](https://t.me/Termuxcodex)
+---
+
+## ✨ Features
+
+- 🎨 Custom Termux Banner with your name
+- 🐚 Auto ZSH + Oh-My-Zsh setup
+- 🔌 Zsh plugins (autosuggestions, syntax-highlighting)
+- 💬 Built-in chat tool
+- 🎨 Custom font & color theme
+- ⚡ Fast one-line install
+
+---
+
+Made with ❤️ by **X-Fm** | [t.me/fmitofficial](https://t.me/fmitofficial)
