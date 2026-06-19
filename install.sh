@@ -1,10 +1,9 @@
 #!/bin/bash
 clear
-mkdir -p $HOME/.T-BANNER
-mkdir -p $HOME/.T-BANNER-NX
+mkdir -p $HOME/.CODEX
+mkdir -p $HOME/.Codex-simu
 mkdir -p $HOME/.toolx
-
-# Colors
+# dx color
 r='\033[1;91m'
 p='\033[1;95m'
 y='\033[1;93m'
@@ -12,18 +11,17 @@ g='\033[1;92m'
 n='\033[1;0m'
 b='\033[1;94m'
 c='\033[1;96m'
-    
 
-# Symbols
-X='\033[1;92m[\033[1;00mT-BANNER\033[1;92m]\033[1;96m'
-D='\033[1;92m[\033[1;00m◇\033[1;92m]\033[1;93m'
+# dx Symbol
+X='\033[1;92m[\033[1;00m⎯꯭̽𓆩\033[1;92m]\033[1;96m'
+D='\033[1;92m[\033[1;00m〄\033[1;92m]\033[1;93m'
 E='\033[1;92m[\033[1;00m×\033[1;92m]\033[1;91m'
 A='\033[1;92m[\033[1;00m+\033[1;92m]\033[1;92m'
 C='\033[1;92m[\033[1;00m</>\033[1;92m]\033[92m'
-lm='\033[96m▱▱▱▱▱▱▱▱▱▱▱▱\033[0m◇\033[96m▱▱▱▱▱▱▱▱▱▱▱▱\033[1;00m'
-dm='\033[93m▱▱▱▱▱▱▱▱▱▱▱▱\033[0m◇\033[93m▱▱▱▱▱▱▱▱▱▱▱▱\033[1;00m'
+lm='\033[96m▱▱▱▱▱▱▱▱▱▱▱▱\033[0m〄\033[96m▱▱▱▱▱▱▱▱▱▱▱▱\033[1;00m'
+dm='\033[93m▱▱▱▱▱▱▱▱▱▱▱▱\033[0m〄\033[93m▱▱▱▱▱▱▱▱▱▱▱▱\033[1;00m'
 
-# Icons
+# dx icon
 OS="\uf6a6"
 HOST="\uf6c3"
 KER="\uf83c"
@@ -36,13 +34,17 @@ CPUI="\ue266"
 HOMES="\uf015"
 
 # Device Detection
-MODEL=$(getprop ro.product.model)
-VENDOR=$(getprop ro.product.manufacturer)
+if command -v getprop &>/dev/null; then
+    MODEL=$(getprop ro.product.model)
+    VENDOR=$(getprop ro.product.manufacturer)
+else
+    MODEL=$(uname -n)
+    VENDOR=$(uname -s)
+fi
 devicename="${VENDOR} ${MODEL}"
 THRESHOLD=100
 random_number=$(( RANDOM % 2 ))
 
-# Exit handler
 exit_script() {
     clear
     echo
@@ -50,31 +52,40 @@ exit_script() {
     echo -e ""
     echo -e "${c}              (\_/)"
     echo -e "              (${y}^_^${c})     ${A} ${g}Hey dear${c}"
-    echo -e "             ⊂(___)づ  ⋅˚₊‧ ଳ ‧₊˚ ⋅"
-    echo -e "\n ${g}[${n}${KER}${g}] ${c}Exiting ${g}T-BANNER"
+    echo -e "             ⊂(___)づ  ⋅˚₊‧ ଳ ‧₊˚ ⋅"              
+    echo -e "\n ${g}[${n}${KER}${g}] ${c}Exiting ${g}Codex Banner \033[1;36m"
     echo
     cd "$HOME"
-    rm -rf "$HOME/T-BANNER"
+    rm -rf "$HOME/CODEX"
     kill -9 $PPID 2>/dev/null
     exit 0
 }
 
-# Install ncurses-utils first
-if ! command -v tput &>/dev/null; then
-    echo -e " ${C} ${g}Waiting for setup Screen!${n}"
-    pkg install ncurses-utils -y >/dev/null 2>&1
+if command -v tput &>/dev/null; then
+    echo ""
+else
+    echo -e " ${C} ${g}Waiting for setup Screen!¡${n}"
+    if [ -d "/data/data/com.termux/files/usr/" ]; then
+        pkg install ncurses-utils -y >/dev/null 2>&1
+    else
+        sudo apt install ncurses-bin -y >/dev/null 2>&1 || true
+    fi
     clear
 fi
 
-# Install curl if not present
-if ! command -v curl &>/dev/null; then
-    pkg install curl -y >/dev/null 2>&1
+if command -v curl &>/dev/null; then
+    echo ""
+else
+    if [ -d "/data/data/com.termux/files/usr/" ]; then
+        pkg install curl -y >/dev/null 2>&1
+    else
+        sudo apt install curl -y >/dev/null 2>&1 || true
+    fi
     clear
 fi
 
 trap exit_script SIGINT SIGTSTP
 
-# Check disk usage
 check_disk_usage() {
     local threshold=${1:-$THRESHOLD}
     local total_size=$(df -h "$HOME" | awk 'NR==2 {print $2}')
@@ -89,102 +100,98 @@ check_disk_usage() {
 }
 data=$(check_disk_usage)
 
-# Start animation
 start() {
     clear
     tput civis
-    
-    # Get terminal width
-    width=$(tput cols)
-    center=$((width / 2))
-    
-    # Circle spinner frames
-    spin=('◐' '◓' '◑' '◒')
-    
-    # Text messages
-    messages=(
-        "T-BANNER STARTED"
-        "HELLO DEAR USER"
-        "I'M TERMUX BANNER TOOL"
-        "ENJOY OUR BANNER"
-        "LOADING COMPLETE"
+    LIME='\e[38;5;154m'
+    C='\e[38;5;51m'
+    BLINK='\e[5m'
+    N='\e[0m'
+    TOTAL_CHARS=0
+    texts=(
+        "「 CODEX STARTED 」"
+        "「 HELLO DEAR USER I'M DX-SIMU 」"
+        "「 CODEX WILL PROTECT YOU 」"
+        "「 GOODBYE 」"
+        "「 ENJOY OUR CODEX 」"
+        "「............... 」"
     )
-    
-    # Circle position (line 2)
-    circle_line=2
-    text_line=5
-    
-    for i in "${!messages[@]}"; do
-        msg="${messages[$i]}"
-        msg_len=${#msg}
-        msg_center=$(( (width - msg_len) / 2 ))
-        
-        # 4 frames per message
-        for frame in {0..3}; do
-            tput sc
-            tput cup $circle_line 0
-            tput el
-            printf "%$((center - 2))s" ""
-            echo -ne "${g}╭─${y}${spin[$frame]}${g}─╮${n}"
-            
-            tput cup $((circle_line + 1)) 0
-            tput el
-            printf "%$((center - 2))s" ""
-            echo -ne "${g}│${c}●${p}◆${c}●${g}│${n}"
-            
-            tput cup $((circle_line + 2)) 0
-            tput el
-            printf "%$((center - 2))s" ""
-            echo -ne "${g}╰─${y}${spin[$frame]}${g}─╯${n}"
-            
-            tput cup $text_line 0
-            tput el
-            printf "%${msg_center}s" ""
-            echo -e "${c}${msg}${n}"
-            
-            tput rc
-            sleep 0.08
+    for t in "${texts[@]}"; do
+        TOTAL_CHARS=$((TOTAL_CHARS + ${#t}))
+    done
+    CURRENT_CHAR=0
+    update_progress() {
+        local percentage=$(( CURRENT_CHAR * 100 / TOTAL_CHARS ))
+        if [ "$percentage" -gt 100 ]; then percentage=100; fi
+        local term_width=$(tput cols)
+        local bar_width=$((term_width - 20))
+        if [ "$bar_width" -gt 50 ]; then bar_width=50; fi
+        local padding=$(( (term_width - bar_width - 10) / 2 ))
+        local filled=$(( percentage * bar_width / 100 ))
+        local empty=$(( bar_width - filled ))
+        local f_bar=$(printf "%${filled}s" "")
+        local e_bar=$(printf "%${empty}s" "")
+        tput sc
+        tput cup 2 0
+        tput el
+        printf "%${padding}s${LIME}[\e[48;5;154m%s\e[0m\e[48;5;236m%s\e[0m${LIME}] ${C}%3d%%${N}" "" "$f_bar" "$e_bar" "$percentage"
+        tput rc
+    }
+    type_effect() {
+        local text="$1"
+        local delay="$2"
+        local term_width=$(tput cols)
+        local text_length=${#text}
+        local padding=$(( (term_width - text_length) / 2 ))
+        printf "%${padding}s" ""
+        for ((i=0; i<${#text}; i++)); do
+            CURRENT_CHAR=$((CURRENT_CHAR + 1))
+            update_progress
+            printf "${LIME}${BLINK}${text:$i:1}${N}"
+            if (( RANDOM % 1 == 0 )); then
+                printf "\e[48;5;51m \e[0m"
+                printf "\b \b"
+            fi
+            sleep "$delay"
         done
-    done
-    
-    # Final animation
-    for frame in {0..7}; do
-        tput cup $circle_line 0
-        tput el
-        printf "%$((center - 2))s" ""
-        echo -ne "${g}╭─${y}${spin[$((frame % 4))]}${g}─╮${n}"
-        
-        tput cup $((circle_line + 1)) 0
-        tput el
-        printf "%$((center - 2))s" ""
-        echo -ne "${g}│${g}✔${c}✔${g}✔${c}│${n}"
-        
-        tput cup $((circle_line + 2)) 0
-        tput el
-        printf "%$((center - 2))s" ""
-        echo -ne "${g}╰─${y}${spin[$((frame % 4))]}${g}─╯${n}"
-        
-        sleep 0.1
-    done
-    
-    sleep 0.5
+        echo
+        echo
+    }
+    tput cup 5 0
+    type_effect "${texts[0]}" 0.01
+    sleep 0.1
+    type_effect "${texts[1]}" 0.02
+    sleep 0.1
+    type_effect "${texts[2]}" 0.02
+    sleep 0.1
+    type_effect "${texts[3]}" 0.02
+    sleep 0.1
+    type_effect "${texts[4]}" 0.02
+    sleep 0.1
+    type_effect "${texts[5]}" 0.02
+    sleep 1
     tput cnorm
-    clear
+    clear 
 }
 start
 
-# Ensure curl
+
 tr() {
     if ! command -v curl &>/dev/null; then
-        pkg install curl -y >/dev/null 2>&1
+        if [ -d "/data/data/com.termux/files/usr/" ]; then
+            pkg install curl -y &>/dev/null 2>&1
+        else
+            sudo apt install curl -y &>/dev/null 2>&1
+        fi
     fi
 }
 
-# Spinner for installations
+
+
 spin() {
     echo
     local delay=0.40
-    local spinner=('█░░░░' '░█░░░' '░░█░░' '░░░█░' '░░░░█')
+    local spinner=('█■■■■' '■█■■■' '■■█■■' '■■■█■' '■■■■█')
 
     show_spinner() {
         local pid=$!
@@ -253,51 +260,142 @@ spin() {
     fi
 }
 
-# Setup Termux paths
+linux_spin() {
+    echo
+    local delay=0.40
+    local spinner=('█■■■■' '■█■■■' '■■█■■' '■■■█■' '■■■■█')
+
+    show_spinner() {
+        local pid=$!
+        while ps -p $pid > /dev/null; do
+            for i in "${spinner[@]}"; do
+                tput civis
+                echo -ne "\033[1;96m\r [+] Installing $1 please wait \e[33m[\033[1;92m$i\033[1;93m]\033[1;0m   "
+                sleep $delay
+                printf "\b\b\b\b\b\b\b\b"
+            done
+        done
+        printf "   \b\b\b\b\b"
+        tput cnorm
+        printf "\e[1;93m [Done $1]\e[0m\n"
+        echo
+        sleep 1
+    }
+
+    if command -v apt >/dev/null 2>&1; then
+        sudo -v # Caches sudo credentials
+        sudo apt update >/dev/null 2>&1
+        packages=("git" "python3" "python3-pip" "jq" "figlet" "zsh" "ruby" "exa")
+        for package in "${packages[@]}"; do
+            if ! command -v "$package" >/dev/null 2>&1; then
+                sudo apt install "$package" -y >/dev/null 2>&1 &
+                show_spinner "$package"
+            fi
+        done
+    fi
+
+    if ! command -v lolcat >/dev/null 2>&1; then
+        sudo pip3 install lolcat --break-system-packages >/dev/null 2>&1 || pip3 install lolcat >/dev/null 2>&1 &
+        show_spinner "lolcat(pip)"
+    fi
+
+    if [ ! -d "$HOME/.toolx/" ]; then
+        mkdir -p "$HOME/.toolx"
+    fi
+    
+    if [ ! -d "$HOME/.oh-my-zsh" ]; then
+        git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh >/dev/null 2>&1 &
+        show_spinner "oh-my-zsh"
+    fi
+    
+    if [ "$SHELL" != "$(command -v zsh)" ]; then
+        sudo chsh -s $(command -v zsh) $USER >/dev/null 2>&1
+        # No background processing for chsh on linux to avoid hanging
+    fi
+    
+    if [ ! -f "$HOME/.zshrc" ]; then
+        rm -rf ~/.zshrc >/dev/null 2>&1
+        cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc &
+        show_spinner "zshrc"
+    fi
+    
+    if [ ! -d "$HOME/.oh-my-zsh/plugins/zsh-autosuggestions" ]; then
+        git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.oh-my-zsh/plugins/zsh-autosuggestions >/dev/null 2>&1 &
+        show_spinner "zsh-autosuggestions"
+    fi
+    
+    if [ ! -d "$HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting" ]; then
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.oh-my-zsh/plugins/zsh-syntax-highlighting >/dev/null 2>&1 &
+        show_spinner "zsh-syntax"
+    fi
+}
+
 setup_termux_paths() {
     mkdir -p $HOME/.toolx
     ds="$HOME/.termux"
     dx="$ds/font.ttf"
     simu="$ds/colors.properties"
     if [ ! -f "$dx" ]; then
-        cp $HOME/T-BANNER/files/font.ttf "$ds"
+        cp $HOME/CODEX/files/font.ttf "$ds"
     fi
     if [ ! -f "$simu" ]; then
-        cp $HOME/T-BANNER/files/colors.properties "$ds"
+        cp $HOME/CODEX/files/colors.properties "$ds"
     fi
-    mv $HOME/T-BANNER/files/chat $HOME/.toolx/
+    mv $HOME/CODEX/files/chat $HOME/.toolx/
     chmod +x $HOME/.toolx/chat
-    mv $HOME/T-BANNER/files/unstall $HOME/.toolx/
+    mv $HOME/CODEX/files/unstall $HOME/.toolx/
     chmod +x $HOME/.toolx/unstall
-    mv $HOME/T-BANNER/files/bname $HOME/.toolx/
+    mv $HOME/CODEX/files/bname $HOME/.toolx/
     chmod +x $HOME/.toolx/bname
-    mv $HOME/T-BANNER/files/simu $PREFIX/bin/
+    mv $HOME/CODEX/files/simu $PREFIX/bin/
     chmod +x $PREFIX/bin/simu
-    mv $HOME/T-BANNER/files/dev $HOME/.toolx/
+    mv $HOME/CODEX/files/dev $HOME/.toolx/
     chmod +x $HOME/.toolx/dev
-    mv $HOME/T-BANNER/files/update $HOME/.toolx/
+    mv $HOME/CODEX/files/update $HOME/.toolx/
     chmod +x $HOME/.toolx/update
-    mv $HOME/T-BANNER/files/help $HOME/.toolx/
+    mv $HOME/CODEX/files/help $HOME/.toolx/
     chmod +x $HOME/.toolx/help
-    mv $HOME/T-BANNER/files/code $PREFIX/bin/
+    mv $HOME/CODEX/files/code $PREFIX/bin/
     chmod +x $PREFIX/bin/code
     termux-reload-settings
 }
 
-# Check internet connection
+setup_linux_paths() {
+    mkdir -p $HOME/.toolx
+    mkdir -p ~/.local/share/fonts
+    cp $HOME/CODEX/files/font.ttf ~/.local/share/fonts/
+    fc-cache -fv  > /dev/null
+    mv $HOME/CODEX/files/chat $HOME/.toolx/
+    chmod +x $HOME/.toolx/chat
+    mv $HOME/CODEX/files/unstall $HOME/.toolx/
+    chmod +x $HOME/.toolx/unstall
+    mv $HOME/CODEX/files/bnamel $HOME/.toolx/
+    chmod +x $HOME/.toolx/bname
+    mv $HOME/CODEX/files/dev $HOME/.toolx/
+    chmod +x $HOME/.toolx/dev
+    sudo mv $HOME/CODEX/files/simu /usr/local/bin/
+    sudo chmod +x /usr/local/bin/simu
+    mv $HOME/CODEX/files/update $HOME/.toolx/
+    chmod +x $HOME/.toolx/update
+    mv $HOME/CODEX/files/help $HOME/.toolx/
+    chmod +x $HOME/.toolx/help
+    sudo mv $HOME/CODEX/files/code /usr/local/bin/
+    chmod +x /usr/local/bin/code
+}
+
 dxnetcheck() {
     clear
     echo
-    echo -e "		            ${g}Uhu"
-    echo -e "${c}                      (\_/)"
-    echo -e "                      (${y}^_^${c})"
-    echo -e "                     ⊂(___)づ"
+    echo -e "		              ${g}Uhu"
+    echo -e "${c}                        (\_/)"
+    echo -e "                        (${y}^_^${c})"
+    echo -e "                       ⊂(___)づ"
     echo
-    echo -e "               ${g}╔═════════════════╗"
-    echo -e "               ${g}║ ${n}</>  ${c}T-BANNER${g}   ║"
-    echo -e "               ${g}╚═════════════════╝"
+    echo -e "                ${g}╔════════════════╗"
+    echo -e "                ${g}║ ${n}</>  ${c}CODEX-X${g}   ║"
+    echo -e "                ${g}╚════════════════╝"
     echo -e "  ${g}╔════════════════════════════════════════════╗"
-    echo -e "  ${g}║     ${y} Checking Your Internet Connection¡ ${g}   ║"
+    echo -e "  ${g}║  ${y} Checking Your Internet Connection¡ ${g}      ║"
     echo -e "  ${g}╚════════════════════════════════════════════╝${n}"
     while true; do
         curl --silent --head --fail https://github.com > /dev/null
@@ -313,16 +411,14 @@ dxnetcheck() {
     clear
 }
 
-# Sync ID
 sync_id() {
-    UPDATE_LOG="$HOME/.t-banner_update_id.txt"
+UPDATE_LOG="$HOME/.codex_update_id.txt"
     if command -v curl >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
-        local sid=$(curl -s --connect-timeout 5 "$T-BANNER/update" 2>/dev/null | jq -r '.id' 2>/dev/null | tr -d '[:space:]')
+        local sid=$(curl -s --connect-timeout 5 "$CODEX/update" 2>/dev/null | jq -r '.id' 2>/dev/null | tr -d '[:space:]')
         [ -n "$sid" ] && [ "$sid" != "null" ] && echo "$sid" > "$UPDATE_LOG"
     fi
 }
 
-# Banner name setup
 donotchange() {
     clear
     echo
@@ -344,6 +440,7 @@ donotchange() {
             continue
         fi
         
+       
         if [[ ! "$name" =~ ^[a-zA-Z0-9[:space:]-]+$ ]]; then
             echo -e " ${E} ${r}Invalid Input! No fancy fonts or symbols.\n ${E} ${r}Use letters, numbers, hyphens & spaces only.${c}"
             echo
@@ -353,6 +450,7 @@ donotchange() {
         name="${name^^}"
         name="${name// /-}"
 
+ 
         len=${#name}
         if [[ $len -ge 1 && $len -le 8 ]]; then
             break
@@ -362,19 +460,23 @@ donotchange() {
         fi
     done
 
-    D1="$HOME/.termux"
-    mkdir -p "$D1"
+    if [ -d "/data/data/com.termux/files/usr/" ]; then
+        D1="$HOME/.termux"
+    else
+        D1="$HOME/.CODEX"
+        mkdir -p "$D1"
+    fi
     
     USERNAME_FILE="$D1/usernames.txt"
-    INPUT_FILE="$HOME/T-BANNER/files/.zshrc"
-    THEME_INPUT="$HOME/T-BANNER/files/.t-banner.zsh-theme"
+    INPUT_FILE="$HOME/CODEX/files/.zshrc"
+    THEME_INPUT="$HOME/CODEX/files/.codex.zsh-theme"
     OUTPUT_ZSHRC="$HOME/.zshrc"
-    OUTPUT_THEME="$HOME/.oh-my-zsh/themes/t-banner.zsh-theme"
+    OUTPUT_THEME="$HOME/.oh-my-zsh/themes/codex.zsh-theme"
     TEMP_FILE="$HOME/temp.zshrc"
     sed "s/DX-SIMU/$name/g" "$INPUT_FILE" > "$TEMP_FILE" &&
     sed "s/DX-SIMU/$name/g" "$THEME_INPUT" > "$OUTPUT_THEME" &&
  
-    if [[ $? -eq 0 ]]; then
+  if [[ $? -eq 0 ]]; then
         mv "$TEMP_FILE" "$OUTPUT_ZSHRC"
         clear
         echo
@@ -384,7 +486,7 @@ donotchange() {
         echo -e "              (${y}^ω^${c})     ${g}I'm Dx-Simu${c}"
         echo -e "             ⊂(___)づ  ⋅˚₊‧ ଳ ‧₊˚ ⋅"
         echo
-        echo -e " ${A} ${c}Your Banner created ${g}Successfully!${c}"
+        echo -e " ${A} ${c}Your Banner created ${g}Successfully¡${c}"
         echo
         sleep 1
         sync_id
@@ -397,49 +499,65 @@ donotchange() {
     clear
 }
 
-# Main banner display
 banner() {
     clear
-    echo -e "${c}
-╔════════════════════════════════════════════════╗
-║     ╔════╗────╔══╗╔═══╦═╗─╔╦═╗─╔╦═══╦═══╗      ║
-║     ║╔╗╔╗║────║╔╗║║╔═╗║║╚╗║║║╚╗║║╔══╣╔═╗║      ║
-║     ╚╝║║╚╝────║╚╝╚╣║─║║╔╗╚╝║╔╗╚╝║╚══╣╚═╝║      ║
-║     ──║║──╔══╗║╔═╗║╚═╝║║╚╗║║║╚╗║║╔══╣╔╗╔╝      ║
-║     ──║║──╚══╝║╚═╝║╔═╗║║─║║║║─║║║╚══╣║║╚╗      ║
-║     ──╚╝──────╚═══╩╝─╚╩╝─╚═╩╝─╚═╩═══╩╝╚═╝      ║
-╚════════════════════════════════════════════════╝
-${n}╭════════════════════════════════════════════════╮
-┃ ${g}[ム] ${c}Name    : ${y}TERMUX-BANNER${n}                   ┃
-┃ ${g}[ム] ${c}Version : ${y}1.0.0${n}                           ┃
-┃ ${g}[ム] ${c}Author  : ${y}MOHAMMAD ALAMIN${n}                 ┃
-┃ ${g}[ム] ${c}Website : ${y}https://alamin2k7.bio.link${n}      ┃
-╰════════════════════════════════════════════════╯
-
-"
+    echo
+    echo
+    echo -e "   ${y}░█████╗░░█████╗░██████╗░███████╗██╗░░██╗"
+    echo -e "   ${y}██╔══██╗██╔══██╗██╔══██╗██╔════╝╚██╗██╔╝"
+    echo -e "   ${y}██║░░╚═╝██║░░██║██║░░██║█████╗░░░╚███╔╝░"
+    echo -e "   ${c}██║░░██╗██║░░██║██║░░██║██╔══╝░░░██╔██╗░"
+    echo -e "   ${c}╚█████╔╝╚█████╔╝██████╔╝███████╗██╔╝╚██╗"
+    echo -e "   ${c}░╚════╝░░╚════╝░╚═════╝░╚══════╝╚═╝░░╚═╝${n}"
+    echo -e "${y}               +-+-+-+-+-+-+-+-+"
+    echo -e "${c}               |D|X|-|C|O|D|E|X|"
+    echo -e "${y}               +-+-+-+-+-+-+-+-+${n}"
+    echo
+    if [ $random_number -eq 0 ]; then
+        echo -e "${b}╭════════════════════════⊷"
+        echo -e "${b}┃ ${g}[${n}ム${g}] ᴛɢ: ${y}t.me/Termuxcodex"
+        echo -e "${b}╰════════════════════════⊷"
+    else
+        echo -e "${b}╭══════════════════════════⊷"
+        echo -e "${b}┃ ${g}[${n}ム${g}] ᴛɢ: ${y}t.me/alphacodex369"
+        echo -e "${b}╰══════════════════════════⊷"
+    fi
+    echo
+    echo -e "${b}╭══ ${g}〄 ${y}ᴄᴏᴅᴇx ${g}〄"
+    echo -e "${b}┃❁ ${g}ᴄʀᴇᴀᴛᴏʀ: ${y}ᴅx-ᴄᴏᴅᴇx"
+    echo -e "${b}┃❁ ${g}ᴅᴇᴠɪᴄᴇ: ${y}${VENDOR} ${MODEL}"
+    echo -e "${b}╰┈➤ ${g}Hey ${y}Dear"
+    echo
 }
 
-
-
-# Main setup - DIRECT START (no menu)
 setupx() {
     tr
     dxnetcheck
     banner
     
-    echo -e " ${C} ${y}Detected Termux on Android!"
-    echo -e " ${lm}"
-    echo -e " ${A} ${g}Updating Package..!"
-    echo -e " ${dm}"
-    echo -e " ${A} ${g}Wait a few minutes.${n}"
-    echo -e " ${lm}"
-    spin
+    if [ -d "/data/data/com.termux/files/usr/" ]; then
+        echo -e " ${C} ${y}Detected Termux on Android¡"
+        echo -e " ${lm}"
+        echo -e " ${A} ${g}Updating Package..¡"
+        echo -e " ${dm}"
+        echo -e " ${A} ${g}Wait a few minutes.${n}"
+        echo -e " ${lm}"
+        spin
+    else
+        echo -e " ${C} ${y}Detected Linux System¡"
+        echo -e " ${lm}"
+        echo -e " ${A} ${g}Updating Package..¡"
+        echo -e " ${dm}"
+        echo -e " ${A} ${g}Wait a few minutes.${n}"
+        echo -e " ${lm}"
+        linux_spin
+    fi
 
-    if [ -d "$HOME/T-BANNER" ]; then
+    if [ -d "$HOME/CODEX" ]; then
         sleep 2
         clear
         banner
-        echo -e " ${A} ${p}Updating Completed...!!"
+        echo -e " ${A} ${p}Updating Completed...!¡"
         echo -e " ${dm}"
         clear
         banner
@@ -447,15 +565,20 @@ setupx() {
         echo
         echo -e " ${A} ${g}Wait a few minutes.${n}"
         
-        setup_termux_paths
+        if [ -d "/data/data/com.termux/files/usr/" ]; then
+            setup_termux_paths
+        else
+            setup_linux_paths
+        fi
+        
         donotchange
         clear
         banner
-        echo -e " ${C} ${c}Type ${g}exit ${c} then ${g}enter ${c}Now Open Your Terminal!! ${g}[${n}${HOMES}${g}]${n}"
+        echo -e " ${C} ${c}Type ${g}exit ${c} then ${g}enter ${c}Now Open Your Terminal¡¡ ${g}[${n}${HOMES}${g}]${n}"
         echo
         sleep 3
         cd "$HOME"
-        rm -rf "$HOME/T-BANNER"
+        rm -rf "$HOME/CODEX"
         kill -9 $PPID 2>/dev/null
         exit 0
     else
@@ -469,5 +592,148 @@ setupx() {
     fi
 }
 
-# Start directly
-setupx
+banner2() {
+    echo
+    echo
+    echo -e "   ${y}░█████╗░░█████╗░██████╗░███████╗██╗░░██╗"
+    echo -e "   ${y}██╔══██╗██╔══██╗██╔══██╗██╔════╝╚██╗██╔╝"
+    echo -e "   ${y}██║░░╚═╝██║░░██║██║░░██║█████╗░░░╚███╔╝░"
+    echo -e "   ${c}██║░░██╗██║░░██║██║░░██║██╔══╝░░░██╔██╗░"
+    echo -e "   ${c}╚█████╔╝╚█████╔╝██████╔╝███████╗██╔╝╚██╗"
+    echo -e "   ${c}░╚════╝░░╚════╝░╚═════╝░╚══════╝╚═╝░░╚═╝${n}"
+    echo -e "${y}               +-+-+-+-+-+-+-+-+"
+    echo -e "${c}               |D|X|-|C|O|D|E|X|"
+    echo -e "${y}               +-+-+-+-+-+-+-+-+${n}"
+    echo
+    if [ $random_number -eq 0 ]; then
+        echo -e "${b}╭════════════════════════⊷"
+        echo -e "${b}┃ ${g}[${n}ム${g}] ᴛɢ: ${y}t.me/Termuxcodex"
+        echo -e "${b}╰════════════════════════⊷"
+    else
+        echo -e "${b}╭══════════════════════════⊷"
+        echo -e "${b}┃ ${g}[${n}ム${g}] ᴛɢ: ${y}t.me/alphacodex369"
+        echo -e "${b}╰══════════════════════════⊷"
+    fi
+    echo
+    echo -e "${b}╭══ ${g}〄 ${y}ᴄᴏᴅᴇx ${g}〄"
+    echo -e "${b}┃❁ ${g}ᴄʀᴇᴀᴛᴏʀ: ${y}ᴅx-ᴄᴏᴅᴇx"
+    echo -e "${b}╰┈➤ ${g}Hey ${y}Dear"
+    echo
+    echo -e "${c}╭════════════════════════════════════════════════⊷"
+    echo -e "${c}┃ ${p}❏ ${g}Choose what you want to use. then Click Enter${n}"
+    echo -e "${c}╰════════════════════════════════════════════════⊷"
+}
+
+options=("Free Usage" "Premium")
+selected=0
+
+display_menu() {
+    clear
+    banner2
+    echo
+    echo -e " ${g}■ \e[4m${p}Select An Option\e[0m ${g}▪︎${n}"
+    echo
+    for i in "${!options[@]}"; do
+        if [ $i -eq $selected ]; then
+            echo -e " ${g}〄> ${c}${options[$i]} ${g}<〄${n}"
+        else
+            echo -e "     ${options[$i]}"
+        fi
+    done
+}
+
+if [ -d "/data/data/com.termux/files/usr/" ]; then
+    clear
+    echo
+    echo -e " ${p}■ \e[4m${g}Use Button\e[4m ${p}▪︎${n}"
+    echo
+    echo -e " ${y}Termux: Use Extra key Button with move${n}"
+    echo
+    echo -e " UP          ↑"
+    echo -e " DOWN        ↓"
+    echo
+    echo -e " ${g}Select option Click Enter button"
+    echo
+    echo -e " ${b}■ \e[4m${c}If you understand, click the Enter Button\e[4m ${b}▪︎${n}"
+    read -p ""
+    clear
+        
+    while true; do
+        display_menu
+        read -rsn1 input
+        if [[ "$input" == $'\e' ]]; then
+            read -rsn2 -t 0.1 input
+            case "$input" in
+                '[A') # Up arrow
+                    ((selected--))
+                    if [ $selected -lt 0 ]; then
+                        selected=$((${#options[@]} - 1))
+                    fi
+                    ;;
+                '[B') # Down arrow
+                    ((selected++))
+                    if [ $selected -ge ${#options[@]} ]; then
+                        selected=0
+                    fi
+                    ;;
+                *)
+                    display_menu
+                    ;;
+            esac
+        elif [[ "$input" == "" ]]; then # Enter key
+            case ${options[$selected]} in
+                "Free Usage")
+                    echo -e "\n ${g}[${n}${HOMES}${g}] ${c}Continue Free..!${n}"
+                    sleep 1
+                    setupx
+                    break
+                    ;;
+                "Premium")
+                    echo -e "\n ${g}[${n}${HOST}${g}] ${c}Wait for opening Telegram..!${n}"
+                    sleep 1
+                    if command -v termux-open >/dev/null 2>&1; then
+                        termux-open "https://t.me/Codexownerbot"
+                    else
+                        xdg-open "https://t.me/Codexownerbot" 2>/dev/null
+                    fi
+                    echo -e "\n ${g}[${n}${HOMES}${g}] ${c}Switching to Free Usage to continue..!${n}"
+                    sleep 2
+                    setupx
+                    break
+                    ;;
+            esac
+        fi
+    done
+else
+    while true; do
+        clear
+        banner2
+        echo
+        echo -e " ${g}■ \e[4m${p}Select An Option\e[0m ${g}▪︎${n}"
+        echo
+        echo -e " ${g}[${n}1${g}] ${c}Free Usage${n}"
+        echo -e " ${g}[${n}2${g}] ${c}Premium${n}"
+        echo
+        read -p "$(echo -e ${A}${g}──[${n}Select Option${g}]────► ${n})" choice
+        
+        if [ "$choice" == "1" ]; then
+            echo -e "\n ${g}[${n}${HOMES}${g}] ${c}Continue Free..!${n}"
+            sleep 1
+            setupx
+            break
+        elif [ "$choice" == "2" ]; then
+            echo -e "\n ${g}[${n}${HOST}${g}] ${c}Wait for opening Telegram..!${n}"
+            sleep 1
+            if command -v xdg-open >/dev/null 2>&1; then
+                xdg-open "https://t.me/Codexownerbot"
+            fi
+            echo -e "\n ${g}[${n}${HOMES}${g}] ${c}Switching to Free Usage to continue..!${n}"
+            sleep 2
+            setupx
+            break
+        else
+            echo -e "\n ${E} ${r}Invalid Choice! Please enter 1 or 2.${n}"
+            sleep 1
+        fi
+    done
+fi
